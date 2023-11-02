@@ -1,2 +1,3 @@
 # fastapi-k8s
-FastAPI wrapper for Kubernetes
+
+[FastAPI](https://fastapi.tiangolo.com/) wrapper for Kubernetes.
