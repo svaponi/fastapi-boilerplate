@@ -3,7 +3,6 @@ import logging
 import typing
 
 import fastapi
-import starlette.config
 
 from app.core.cors import setup_cors
 from app.core.error_handlers import setup_error_handlers
@@ -13,9 +12,13 @@ from app.core.request_context import setup_request_context
 
 @contextlib.asynccontextmanager
 async def _lifespan(app: "App"):
-    app.logger.info("Starting")
+    app.logger.info(f"Starting 🔄")
+    # ...
+    app.logger.info("Started ✅ ")
     yield
-    app.logger.info("Shutting down")
+    app.logger.info("Shutting down 🔄")
+    # ...
+    app.logger.info("Shutdown 🛑")
 
 
 class App(fastapi.FastAPI):
@@ -25,11 +28,9 @@ class App(fastapi.FastAPI):
     ) -> None:
         # IMPORTANT all logs previous to calling setup_logging will be not formatted
         setup_logging()
+        self.logger = logging.getLogger(f"app.core")
 
         super().__init__(lifespan=_lifespan, **extra)
-
-        self.logger = logging.getLogger(f"{__name__}.{self.__class__.__name__}")
-        self.config = starlette.config.Config()
 
         # RequestContext is a nice-to-have util that allows to access request related attributes anywhere in the code
         setup_request_context(self)

@@ -57,7 +57,7 @@ class RequestContext:
         "request_context", default={}
     )
 
-    _logger = logging.getLogger(f"{__name__}.RequestContext")
+    _logger = logging.getLogger(__name__)
 
     @classmethod
     def bind_app(cls, app: fastapi.FastAPI):
@@ -83,7 +83,7 @@ class RequestContext:
             return cls._request_scope_context_storage.get()
         except LookupError as e:
             cls._logger.warning(
-                f"You are trying to access `{cls.__name__}` outside of the request-response cycle."
+                f"You are trying to access {cls.__name__} outside of the request-response cycle."
             )
             return {}
 

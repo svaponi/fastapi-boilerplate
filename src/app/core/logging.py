@@ -3,6 +3,8 @@ import logging
 import os
 import sys
 
+from app.utils.getenv import getenv_bool
+
 # TODO consider refactoring, see https://github.com/mCodingLLC/VideosSampleCode/tree/master/videos/135_modern_logging
 
 _IS_LOGGING_INITIALIZED = False
@@ -50,8 +52,8 @@ def _build_json_handler():
 
 
 def _setup_logging():
-    log_level = os.getenv(key="LOG_LEVEL", default="debug").upper()
-    log_as_json = os.getenv(key="LOG_AS_JSON", default="false").lower() != "false"
+    log_level = os.getenv(key="LOG_LEVEL", default="info").upper()
+    log_as_json = getenv_bool(key="LOG_AS_JSON", default=True)
 
     # remove any predefined root logger handler
     for h in logging.root.handlers:
@@ -72,6 +74,22 @@ def _setup_logging():
 
 
 def _override_log_levels():
+    """
+    Example
+    ```
+        LOG_LEVEL_UVICORN_ERROR=warn
+        LOG_LEVEL_APP_CORE=debug
+    ```
+    Or, alternatively (same result):
+    ```
+        LOG_LEVELS=uvicorn.error=warn,app.core=debug
+    ```
+    """
+    for k, v in os.environ.items():
+        if k.startswith("LOG_LEVEL_"):
+            _name = k.removeprefix("LOG_LEVEL_").replace("_", ".").lower()
+            logging.getLogger(_name).setLevel(v.upper())
+
     for part in os.getenv("LOG_LEVELS", default="").split(","):
         if "=" in part:
             _name, _level = part.split("=", maxsplit=2)

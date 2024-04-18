@@ -13,6 +13,6 @@ def getenv_bool(key, default: bool | None = None) -> bool | None:
     if not val:
         return default
     val = val.lower()
-    if val not in ("true", "false"):
+    if val not in ("true", "false", "1", "0"):
         raise RuntimeError(f"invalid value '{val}' for {key}")
-    return val != "false"
+    return val not in ("false", "0")

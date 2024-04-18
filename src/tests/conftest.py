@@ -2,7 +2,7 @@ import pytest
 import pytest_httpserver
 from starlette.testclient import TestClient
 
-from app.core import create_app
+from app.core.app import create_app
 from tests.testutils.mock_server import MockServer
 
 
