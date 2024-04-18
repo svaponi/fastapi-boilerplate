@@ -5,44 +5,36 @@
 1. Install it from the [Poetry Installation](https://python-poetry.org/docs/#installation) page.
 2. Check the installation by running:
 
-```shell
-poetry --version
-```
+    ```shell
+    poetry --version
+    ```
 
 3. Make sure your version is **1.2.2 or higher.**
 
-## Install G-Cloud CLI
+## Install GCloud CLI
 
-1. Install it from the [G-Cloud Installation](https://cloud.google.com/sdk/docs/install) page.
-2. Make sure you include the CLI into your environment variables.
-3. In a new terminal, initialize the CLI by running:
+1. Install it from the [GCloud Installation](https://cloud.google.com/sdk/docs/install) page.
+2. Run in terminal:
 
-```shell
-gcloud init
-```
+    ```shell
+    gcloud init
+    ```
 
-4. You will be asked to sign via Google Sign On.
-5. Choose your project option from the menu.
+3. You will be asked to sign via Google Sign On.
+4. Choose your project option from the menu.
 
 ## Install G-Cloud implementation of keyring in Poetry
 
-1. From the terminal run:
+1. Run in terminal:
 
-```sh
-poetry self add keyrings.google-artifactregistry-auth
-```
-
-Wait for it to complete the installation.
+    ```sh
+    poetry self add keyrings.google-artifactregistry-auth
+    ```
 
 ### Install Dependencies via Poetry
 
-1. From the terminal run:
+1. Run in terminal:
 
-```sh
-poetry install
-```
-
-Wait for the installation to be completed.
-
-> For more information about Poetry, refer
-> to [Poetry Dependencies Installation](https://python-poetry.org/docs/basic-usage/#installing-dependencies).
+    ```sh
+    poetry install
+    ```
