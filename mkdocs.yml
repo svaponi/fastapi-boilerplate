@@ -1,0 +1,8 @@
+site_name: FastAPI Boilerplate
+site_url: https://svaponi.github.io/fastapi-boilerplate
+nav:
+  - Home: index.md
+  - Setup: setup.md
+  - Cloud Integration:
+      - Google Cloud: gcloud.md
+theme: readthedocs
