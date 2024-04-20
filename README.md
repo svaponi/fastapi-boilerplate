@@ -1,3 +1,3 @@
-# fastapi-k8s
+# fastapi-boilerplate
 
-[FastAPI](https://fastapi.tiangolo.com/) app for Kubernetes.
+Kickstart your [FastAPI](https://fastapi.tiangolo.com/) development with ease by forking this boilerplate repository.
