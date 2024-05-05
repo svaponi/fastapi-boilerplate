@@ -5,6 +5,8 @@ description = ""
 authors = ["svaponi <10941963+svaponi@users.noreply.github.com>"]
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/svaponi/fastapi-boilerplate"
+homepage = "https://svaponi.github.io/fastapi-boilerplate"
 
 [tool.poetry.dependencies]
 python = "^3.12"
