@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - 'fix/**'
-      - 'task/**'
+      - 'feat/**'
 jobs:
   Run-Tests:
     runs-on: ubuntu-latest
