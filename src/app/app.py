@@ -6,7 +6,7 @@ import fastapi
 
 from app.core.cors import setup_cors
 from app.core.error_handlers import setup_error_handlers
-from app.core.logging import setup_logging
+from app.core.logs import setup_logging
 from app.core.request_context import setup_request_context
 
 
