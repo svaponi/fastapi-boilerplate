@@ -21,6 +21,13 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'poetry'
       - name: Install dependencies
-        run: poetry install
+        run: |
+          poetry install --with coverage
       - name: Run tests
-        run: poetry run pytest
+        run: |
+          poetry run coverage run -m pytest
+      - name: Coverage
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          poetry run coveralls
