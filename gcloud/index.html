@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://svaponi.github.io/fastapi-boilerplate/gcloud/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Google Cloud - FastAPI Boilerplate</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Google Cloud";
+        var mkdocs_page_input_path = "gcloud.md";
+        var mkdocs_page_url = "/fastapi-boilerplate/gcloud/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> FastAPI Boilerplate
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../setup/">Setup</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Cloud Integration</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Google Cloud</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#install-google-cloud-cli">Install Google Cloud CLI</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#add-google-cloud-implementation-of-keyring-to-poetry">Add Google Cloud implementation of keyring to Poetry</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">FastAPI Boilerplate</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Cloud Integration</li>
+      <li class="breadcrumb-item active">Google Cloud</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="google-cloud-integration">Google Cloud Integration</h1>
+<p>This page contains information on how to configure the application to use resources on Google Cloud.
+Use-cases:</p>
+<ul>
+<li>Install private dependencies published on <a href="https://cloud.google.com/artifact-registry">Artifact Registry</a>.</li>
+<li>Publish docker image on <a href="https://cloud.google.com/artifact-registry">Artifact Registry</a>.</li>
+<li>Deploy to <a href="https://cloud.google.com/kubernetes-engine">Google Kubernetes Engine (GKE)</a>.</li>
+<li>Deploy to <a href="https://cloud.google.com/run">Cloud Run</a>.</li>
+</ul>
+<h2 id="install-google-cloud-cli">Install Google Cloud CLI</h2>
+<ul>
+<li>Install it from the <a href="https://cloud.google.com/sdk/docs/install">GCloud Installation</a> page.</li>
+<li>Run in terminal:</li>
+</ul>
+<pre><code class="language-shell">gcloud init
+</code></pre>
+<ul>
+<li>You will be asked to sign via Google Sign On.</li>
+<li>Choose your project from the menu.</li>
+</ul>
+<h2 id="add-google-cloud-implementation-of-keyring-to-poetry">Add Google Cloud implementation of keyring to Poetry</h2>
+<ol>
+<li>Run in terminal:</li>
+</ol>
+<pre><code class="language-sh">poetry self add keyrings.google-artifactregistry-auth
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../setup/" class="btn btn-neutral float-left" title="Setup"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../setup/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
