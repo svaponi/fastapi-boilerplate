@@ -2,9 +2,8 @@ name: Test
 run-name: Run Tests 🧪
 on:
   push:
-    branches:
-      - 'fix/**'
-      - 'feat/**'
+    paths:
+      - 'src/**'
 jobs:
   Run-Tests:
     runs-on: ubuntu-latest
