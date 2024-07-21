@@ -27,6 +27,7 @@ jobs:
         run: |
           poetry run coverage run -m pytest
       - name: Coverage
+        if: ${{ env.COVERALLS_REPO_TOKEN }}
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
