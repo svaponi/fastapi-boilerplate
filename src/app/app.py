@@ -28,7 +28,7 @@ class App(fastapi.FastAPI):
     ) -> None:
         # IMPORTANT all logs previous to calling setup_logging will be not formatted
         setup_logging()
-        self.logger = logging.getLogger(f"app.core")
+        self.logger = logging.getLogger(f"app")
 
         super().__init__(lifespan=_lifespan, **extra)
 
