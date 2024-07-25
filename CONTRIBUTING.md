@@ -3,7 +3,7 @@
 Clone the project and open it in you favorite IDE.
 
 ```bash
-git clone git@github.com:svaponi/hello-pypi.git
+git clone git@github.com:svaponi/fastapi-boilerplate.git
 ```
 
 Install dependencies with [Poetry](https://python-poetry.org/docs/#installation).
