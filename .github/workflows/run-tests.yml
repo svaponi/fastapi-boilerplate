@@ -25,7 +25,7 @@ jobs:
           poetry install --with coverage
       - name: Run tests
         run: |
-          poetry run coverage run -m pytest
+          poetry run coverage run --source=app -m pytest
       - name: Coverage
         if: ${{ env.COVERALLS_REPO_TOKEN }}
         env:
