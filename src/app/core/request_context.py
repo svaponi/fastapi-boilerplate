@@ -8,10 +8,13 @@ from typing import Optional, List
 
 import fastapi
 from starlette.datastructures import MutableHeaders
+from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 _ADDITIONAL_HEADERS_CONTEXT_KEY = "_additional_headers"
 _SERVER_TIMING_CONTEXT_KEY = "_server_timing_events"
+_SERVER_TIMING_HEADER = "server-timing"
 _REQUEST_ID_CONTEXT_KEY = "_request_id"
+_REQUEST_ID_HEADER = "x-request-id"
 
 
 class _ServerTimingEvent:
@@ -60,24 +63,6 @@ class RequestContext:
     _logger = logging.getLogger(__name__)
 
     @classmethod
-    def bind_app(cls, app: fastapi.FastAPI):
-        @app.middleware("http")
-        async def init_http_middleware(request: fastapi.Request, call_next):
-            _token = cls._request_scope_context_storage.set(cls._init_context(request))
-            try:
-                response: fastapi.Response = await call_next(request)
-                cls._process_response(response)
-                return response
-            finally:
-                cls._request_scope_context_storage.reset(_token)
-
-    @classmethod
-    def _init_context(cls, request: fastapi.Request) -> dict:
-        # Generate request_id is missing
-        request_id = request.headers.get("x-request-id") or uuid.uuid4().hex
-        return {_REQUEST_ID_CONTEXT_KEY: request_id}
-
-    @classmethod
     def get(cls) -> dict:
         try:
             return cls._request_scope_context_storage.get()
@@ -88,27 +73,27 @@ class RequestContext:
             return {}
 
     @classmethod
+    def init_request_context(cls, /, *, request_id: str) -> None:
+        cls._request_scope_context_storage.set({_REQUEST_ID_CONTEXT_KEY: request_id})
+
+    @classmethod
     def get_request_id(cls) -> Optional[str]:
         return cls.get().get(_REQUEST_ID_CONTEXT_KEY)
 
     @classmethod
-    def _get_additional_headers(cls) -> MutableHeaders:
+    def _additional_headers(cls) -> MutableHeaders:
         return cls.get().setdefault(_ADDITIONAL_HEADERS_CONTEXT_KEY, MutableHeaders())
 
     @classmethod
-    def _get_server_timing_events(cls) -> List[_ServerTimingEvent]:
+    def _server_timing_events(cls) -> List[_ServerTimingEvent]:
         return cls.get().setdefault(_SERVER_TIMING_CONTEXT_KEY, [])
 
     @classmethod
-    def _add_server_timing_event(cls, event: _ServerTimingEvent) -> None:
-        cls._get_server_timing_events().append(event)
-
-    @classmethod
-    def _generate_server_timing_header(cls) -> str:
+    def _get_server_timing_header(cls) -> str:
         """
         Computes Server-Timing header on-the-fly based on current server_timing_events.
         """
-        server_timing_events: List[_ServerTimingEvent] = cls._get_server_timing_events()
+        server_timing_events: List[_ServerTimingEvent] = cls._server_timing_events()
         return (
             ", ".join([str(e) for e in server_timing_events if e.is_terminated()])
             if server_timing_events
@@ -116,18 +101,15 @@ class RequestContext:
         )
 
     @classmethod
-    def _process_response(cls, response: fastapi.Response) -> None:
-        headers = {
-            "server-timing": cls._generate_server_timing_header(),
-            "x-request-id": cls.get_request_id(),
-        }
-        response.headers.update({k: v for k, v in headers.items() if v})
-        for k, v in cls._get_additional_headers().items():
-            response.headers.append(k, v)
+    def get_response_headers(cls) -> MutableHeaders:
+        headers = cls._additional_headers()
+        headers.append(_SERVER_TIMING_HEADER, cls._get_server_timing_header())
+        headers.append(_REQUEST_ID_HEADER, cls.get_request_id())
+        return headers
 
     @classmethod
     def add_header(cls, name: str, value: str) -> None:
-        cls._get_additional_headers().append(name, value)
+        cls._additional_headers().append(name, value)
 
     @classmethod
     def server_timing_event(cls, event_name: Optional[str] = None):
@@ -143,7 +125,7 @@ class RequestContext:
         The code here above will add the entry `my-event;dur={elapsed}` to the Server-Timing response header.
         """
         _event = _ServerTimingEvent(event_name)
-        cls._get_server_timing_events().append(_event)
+        cls._server_timing_events().append(_event)
         return _event
 
     @classmethod
@@ -183,5 +165,36 @@ class RequestContext:
         return decorator
 
 
+class RequestContextMiddleware:
+    def __init__(
+        self,
+        app: "ASGIApp",
+    ) -> None:
+        self.app = app
+
+    async def __call__(self, scope: "Scope", receive: "Receive", send: "Send") -> None:
+        if scope["type"] not in ("http", "websocket"):
+            await self.app(scope, receive, send)
+            return
+
+        # Generate request_id is missing
+        headers = MutableHeaders(scope=scope)
+        request_id = headers.get(_REQUEST_ID_HEADER)
+
+        if not request_id:
+            request_id = uuid.uuid4().hex
+            headers[_REQUEST_ID_HEADER] = request_id
+
+        RequestContext.init_request_context(request_id=request_id)
+
+        async def handle_outgoing_request(message: "Message") -> None:
+            if message["type"] == "http.response.start":
+                MutableHeaders(scope=message).update(RequestContext.get_response_headers())
+            await send(message)
+
+        await self.app(scope, receive, handle_outgoing_request)
+        return
+
+
 def setup_request_context(app: fastapi.FastAPI):
-    RequestContext.bind_app(app)
+    app.add_middleware(RequestContextMiddleware)

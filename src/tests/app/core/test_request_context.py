@@ -11,6 +11,7 @@ def test_request_context():
     @app.get("/ok")
     @RequestContext.server_timing_event_func_decorator("total")
     def ok():
+        RequestContext.add_header("x-test", "foobar")
         return dict(message="ok")
 
     with TestClient(app, raise_server_exceptions=False) as client:
@@ -20,4 +21,5 @@ def test_request_context():
         )
         assert res.status_code == 200
         assert res.headers.get("x-request-id") == "001"
+        assert res.headers.get("x-test") == "foobar"
         assert res.headers.get("server-timing") is not None
