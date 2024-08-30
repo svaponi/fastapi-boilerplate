@@ -5,6 +5,7 @@ import starlette
 import starlette.exceptions
 import starlette.responses
 import starlette.status
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.core.request_context import RequestContext
 
@@ -19,9 +20,9 @@ def build_error_response(
     body = {
         "status_code": status_code,
         "message": message,
+        "request_id": RequestContext.get_request_id(),
     }
     body.update(kwargs)
-    body["request_id"] = RequestContext.get_request_id()
     return fastapi.responses.JSONResponse(body, status_code=status_code)
 
 
@@ -32,7 +33,7 @@ def setup_error_handlers(app: fastapi.FastAPI):
     async def _value_error_handler(
         _: fastapi.Request, exc: ValueError
     ) -> fastapi.responses.JSONResponse:
-        _logger.exception(exc)
+        _logger.error(exc)
         return build_error_response(
             status_code=starlette.status.HTTP_400_BAD_REQUEST,
             message=str(exc),
@@ -50,16 +51,14 @@ def setup_error_handlers(app: fastapi.FastAPI):
     async def _internal_http_exception_handler(
         _: fastapi.Request, exc: fastapi.HTTPException
     ) -> fastapi.responses.JSONResponse:
-        _logger.exception(exc)
+        _logger.error(exc)
         return build_error_response(
             status_code=exc.status_code,
             message=exc.detail,
         )
 
     app.add_exception_handler(ValueError, _value_error_handler)
-    app.add_exception_handler(Exception, _internal_server_error_handler)
     # Override starlette.exceptions.HTTPException response with our handler. Noe that fastapi.HTTPException inherits
     # from starlette.exceptions.HTTPException. See https://fastapi.tiangolo.com/tutorial/handling-errors
-    app.add_exception_handler(
-        starlette.exceptions.HTTPException, _internal_http_exception_handler
-    )
+    app.add_exception_handler(StarletteHTTPException, _internal_http_exception_handler)
+    app.add_exception_handler(Exception, _internal_server_error_handler)
