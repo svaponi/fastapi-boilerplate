@@ -3,15 +3,14 @@ import logging
 import os
 import sys
 
+from app.core.request_context import RequestContext
 from app.utils.getenv import getenv_bool
 
 # TODO consider refactoring, see https://github.com/mCodingLLC/VideosSampleCode/tree/master/videos/135_modern_logging
 
 _IS_LOGGING_INITIALIZED = False
 # see https://docs.python.org/3/library/logging.html#logrecord-attributes
-_LOG_FORMAT = (
-    "%(asctime)s | %(levelname)-5.5s | %(threadName)s | %(name)s :: %(message)s"
-)
+_LOG_FORMAT = "%(asctime)s | %(levelname)-5.5s | %(threadName)s | %(name)s [%(request_id)s] :: %(message)s"
 _FORMATTER = logging.Formatter()
 
 
@@ -30,6 +29,7 @@ def _log_record_to_json(record: logging.LogRecord) -> dict:
                 _FORMATTER.formatException(record.exc_info) if record.exc_info else None
             ),
             "stack_info": record.stack_info,
+            "request_id": record.request_id if hasattr(record, "request_id") else None,
         }.items()
         if v
     }
@@ -51,6 +51,17 @@ def _build_json_handler():
     return _handler
 
 
+class RequestIdFilter(logging.Filter):
+
+    def __init__(self, name: str = ""):
+        super().__init__(name=name)
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        if not hasattr(record, "request_id"):
+            record.request_id = RequestContext.get_request_id()
+        return True
+
+
 def _setup_logging():
     log_level = os.getenv(key="LOG_LEVEL", default="info").upper()
     log_as_json = getenv_bool(key="LOG_AS_JSON", default=True)
@@ -61,6 +72,7 @@ def _setup_logging():
 
     # re-configure root logger handler
     _handler = _build_json_handler() if log_as_json else _build_handler()
+    _handler.addFilter(RequestIdFilter())
     logging.root.addHandler(_handler)
 
     # set root logger level
